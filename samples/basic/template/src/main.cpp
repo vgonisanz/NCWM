@@ -2,10 +2,7 @@
 
 int main()
 {
-	initscr();
-	printw("Hello World !!!");
-	refresh();
-	getch();
-	endwin();
+	NcwmManager manager;
+	manager.init();
 	return 0;
 }

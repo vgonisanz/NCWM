@@ -15,6 +15,7 @@ set(PROJ_MAIN_NAME ncurses_windows_manager)
 set(${PROJ_MAIN_NAME}_LIBS "ncurses")
 set(${PROJ_MAIN_NAME}_DEFS "")
 set(${PROJ_MAIN_NAME}_INCS "")
+set(${PROJ_MAIN_NAME}_PATH "${CMAKE_CURRENT_SOURCE_DIR}" CACHE PATH "Base project path" FORCE)
 set(RESOURCES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources" CACHE PATH "Setting resources path" FORCE)
 
 # Set up a custom install path
@@ -29,7 +30,7 @@ list(APPEND ${PROJ_MAIN_NAME}_EXTRA_LIBS )  # Add your extra libs here
 
 # Project step III: Add modules
 # ------------------------------------------------------------------------------------------------------
-#add_subdirectory(modules)
+add_subdirectory(modules)
 
 # Project step IV: Add examples
 # ------------------------------------------------------------------------------------------------------

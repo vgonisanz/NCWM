@@ -9,7 +9,9 @@ private:
 
 public:
     NcwmManager();
-    void hello();
+    ~NcwmManager();
+
+    void init();
 };
 
 #endif  /* __MODULE_NCWMMANAGER_HEADER_FILE_H */

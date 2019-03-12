@@ -34,7 +34,7 @@ add_executable(${PROJ_NAME} ${${PROJ_NAME}_HEADERS} ${${PROJ_NAME}_SRC} )
 
 # Module step VI: Link a target to given libraries. Set the name of libraries needed by the project.
 # ------------------------------------------------------------------------------------------------------
-TARGET_LINK_LIBRARIES(${PROJ_NAME} ${${PROJ_MAIN_NAME}_LIBS})
+TARGET_LINK_LIBRARIES(${PROJ_NAME} ${${PROJ_MAIN_NAME}_LIBS} ncwm_core)
 
 # Module step VII: Specify rules to run at install time. Copy generated library and PUBLIC headers to a destination.
 # ------------------------------------------------------------------------------------------------------

@@ -2,10 +2,19 @@
 
 NcwmManager::NcwmManager()
 {
-
+    printf("Initializing NcwmManager");
+    initscr();
 }
 
-void NcwmManager::hello()
+NcwmManager::~NcwmManager()
 {
-    printf("Hello ");
+    endwin();
+    printf("Destroying NcwmManager");
+}
+
+void NcwmManager::init()
+{
+    printw("Hello World !!!");
+	refresh();
+	getch();
 }
