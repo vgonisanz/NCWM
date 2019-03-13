@@ -1,5 +1,7 @@
-#include "ncwm_manager.h"
 #include <sstream>
+
+#include "ncwm_manager.h"
+#include "frame.h"
 
 WINDOW* NcwmManager::_stdscr = nullptr;
 
@@ -10,6 +12,7 @@ NcwmManager::NcwmManager()
     raw();				            /* Line buffering disabled */
 	keypad(stdscr, TRUE);	        /* We get F1, F2... */
 	noecho();			            /* Don't echo() while we do getch */
+    curs_set(NCWM_CURSOR::INVISIBLE);
     if (has_colors())
     {
         start_color();                  /* Allow color */
@@ -59,4 +62,10 @@ void NcwmManager::info()
     waddstr(_stdscr, baud_rate_stream.str().c_str());
     waddstr(_stdscr, "\n\n\tPush a key to continue...");
     getch();
+}
+
+void NcwmManager::test()
+{
+    Frame frame(5);
+    frame.run();
 }

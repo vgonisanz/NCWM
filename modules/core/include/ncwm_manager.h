@@ -3,6 +3,8 @@
 
 #include <ncurses.h>
 
+#include "ncwm_types.h"
+
 class NcwmManager
 {
 private:
@@ -13,6 +15,7 @@ public:
     ~NcwmManager();
 
     void init();
+    void test();
     static void info();
 };
 
