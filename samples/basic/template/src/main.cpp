@@ -3,6 +3,7 @@
 int main()
 {
 	NcwmManager manager;
-	manager.init();
+	//manager.init();
+	manager.info();
 	return 0;
 }

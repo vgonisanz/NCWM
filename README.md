@@ -27,6 +27,7 @@ make install
 * [NCurses man page](https://invisible-island.net/ncurses/man/ncurses.3x.html)
 * [NCurses HowTo](http://www.tldp.org/HOWTO/NCURSES-Programming-HOWTO/)
 * [Ncurses Programming Guide by X. Li](http://hughm.cs.ukzn.ac.za/~murrellh/os/notes/ncurses.html)
+* [IBM Curses documentation](https://www.ibm.com/support/knowledgecenter/en/ssw_aix_72/com.ibm.aix.genprogc/curses.htm)
 
 Also check the doc folder.
 
