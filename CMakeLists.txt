@@ -35,3 +35,7 @@ add_subdirectory(modules)
 # Project step IV: Add examples
 # ------------------------------------------------------------------------------------------------------
 add_subdirectory(samples)
+
+# Custom target to restore Terminal if crash
+# ------------------------------------------------------------------------------------------------------
+add_custom_target(restore_terminal COMMAND stty sane)
