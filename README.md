@@ -1,7 +1,5 @@
 # NCurses Windows Manager
 
-ncurses_windows_manager:
-
 Library to manage terminal windows and widgets to create easily text-based user interfaces
 
 # Usage

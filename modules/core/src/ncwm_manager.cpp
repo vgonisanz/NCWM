@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include "ncwm_manager.h"
-#include "frame.h"
 
 WINDOW* NcwmManager::_stdscr = nullptr;
 
@@ -19,6 +18,7 @@ NcwmManager::NcwmManager()
         //use_default_colors();           /* Default colors */
         if (can_change_color())         // TODO pallete colors
             init_pair(1, COLOR_RED, COLOR_BLACK);
+            init_pair(2, COLOR_CYAN, COLOR_BLACK);
     }
 }
 
@@ -33,6 +33,14 @@ void NcwmManager::init()
     printw("Hello World !!!");
 	refresh();
 	getch();
+}
+
+Rect NcwmManager::get_size()
+{
+    Rect size;
+    getbegyx(_stdscr, size.y, size.x);
+    getmaxyx(_stdscr, size.height, size.width);
+    return size;
 }
 
 void NcwmManager::info()
@@ -64,8 +72,55 @@ void NcwmManager::info()
     getch();
 }
 
+bool NcwmManager::run()
+{
+    if (_frames.empty())
+        return false;
+
+    int current = 0;
+    bool execute = false;
+
+    while((_ch = getch()) != 'q')
+    {
+        switch(_ch)
+        {
+            case 'n':
+                current += 1;
+                break;
+            case 'p':
+                current -= 1;
+                break;
+            case 'e':
+                execute = true;
+        }
+        if (current < 0)
+            current = 0;
+        if (current >= _frames.size())
+            current = _frames.size() - 1;
+        if (execute)
+            _frames.at(current).run();
+        execute = false;
+    }
+
+    return true;
+}
+
 void NcwmManager::test()
 {
-    Frame frame(5);
-    frame.run();
+    Rect rect;
+    rect.x = 5;
+    rect.y = 5;
+    rect.width = 5;
+    rect.height = 5;
+    Frame frame(rect, get_size());
+    _frames.push_back(frame);
+/*
+    Rect rect2;
+    rect.x = 15;
+    rect.y = 15;
+    rect.width = 15;
+    rect.height = 15;
+    Frame frame2(rect2, get_size());
+    _frames.push_back(frame);*/
+    run();
 }

@@ -9,4 +9,12 @@ enum NCWM_CURSOR : uint8_t {
     VERY_VISIBLE = 2,
 };
 
+typedef struct Rect
+{
+    int x;
+    int y;
+    int width;
+    int height;
+} Rect;
+
 #endif  /* __MODULE_NCWMTYPES_HEADER_FILE_H */
