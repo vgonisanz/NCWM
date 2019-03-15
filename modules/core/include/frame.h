@@ -11,18 +11,25 @@ class Frame
 {
 private:
     WINDOW *_win;
-    Rect _rect;
-    Rect _constraint;   /* Max movable position. In example: Parent size. */
     int _ch;            /* Store last character readed */
 
+    Rect _rect;
+    Rect _constraint;   /* Max movable position. In example: Parent size. */
+
+    bool _movable;
+    bool _resizable;
+
+    std::function<void()> _notify;  /* Callback to notify important changes */
     std::map<std::string, std::function<void()> > _mode_callbacks;
 
 public:
-    Frame(Rect rect, Rect constraint);
+    Frame(Rect rect, Rect constraint, bool movable = false, bool resizable = false);
     ~Frame();
 
     void run();
+    void draw_win();
     void refresh_win();
+    void set_notify(std::function<void()> notify);  /* Callback to notify a interface change */
 
 private:
     void create_win();          /* Create win using _rect data */

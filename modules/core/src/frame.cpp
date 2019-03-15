@@ -1,9 +1,12 @@
 #include "frame.h"
 
-Frame::Frame(Rect rect, Rect constraint)
+Frame::Frame(Rect rect, Rect constraint, bool movable, bool resizable):
+_notify(nullptr),
+_rect(rect),
+_constraint(constraint),
+_movable(movable),
+_resizable(resizable)
 {
-    _rect = rect;
-    _constraint = constraint;
     create_win();
 
     _mode_callbacks[std::string("normal")] = std::bind(&Frame::mode_normal, this);
@@ -16,22 +19,34 @@ Frame::~Frame()
     destroy_win();
 }
 
+void Frame::set_notify(std::function<void()> notify)
+{
+    _notify = notify;
+}
+
 void Frame::create_win()
 {
     _win = newwin(_rect.height, _rect.width, _rect.y, _rect.x);
-    box(_win, 0, 0);    /*debug purpose */
+    draw_win();
     refresh_win();
 }
 
 void Frame::move_win()
 {
     mvwin(_win, _rect.y, _rect.x);
+    draw_win();
     refresh_win();
 }
 
 void Frame::destroy_win()
 {
     delwin(_win);
+}
+
+void Frame::draw_win()
+{
+    box(_win, 0, 0);    /*debug purpose */
+    wrefresh(_win);     /* Force refresh after draw */
 }
 
 void Frame::update_win()
@@ -43,16 +58,13 @@ void Frame::update_win()
 
 void Frame::refresh_win()
 {
+    if(_notify != nullptr)
+        _notify();
     wrefresh(_win);
 }
 
 void Frame::run()
 {
-    attron(COLOR_PAIR(2));
-    printw("Press Q to exit\n");
-    refresh();
-    attroff(COLOR_PAIR(2));
-
     set_mode("normal");
 }
 
@@ -68,15 +80,19 @@ bool Frame::set_mode(std::string mode)
 
 void Frame::mode_normal()
 {
+    draw_win();
+    refresh_win();
     while((_ch = getch()) != 'q')
     {
         switch(_ch)
         {
             case 'm':
-                set_mode("movement");
+                if (_movable)
+                    set_mode("movement");
                 break;
             case 'r':
-                set_mode("resize");
+                if (_resizable)
+                    set_mode("resize");
                 break;
         }
     }
@@ -105,10 +121,11 @@ void Frame::mode_resize()
                     _rect.height += 1;
                 break;
         }
-        clear();
-        refresh();
+        //clear();
+        //refresh();
         destroy_win();
         create_win();
+        refresh_win();
     }
 }
 
@@ -134,9 +151,13 @@ void Frame::mode_movement()
                 if (_rect.y + _rect.height < _constraint.height)
                     _rect.y += 1;
                 break;
+            default:
+                break;
         }
-        clear();
+        //clear();
+        //refresh();
         refresh();
         move_win();
+        refresh_win();
     }
 }

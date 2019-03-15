@@ -4,7 +4,9 @@
 
 WINDOW* NcwmManager::_stdscr = nullptr;
 
-NcwmManager::NcwmManager()
+NcwmManager::NcwmManager():
+_end_execution(false),
+_ch('a')
 {
     printf("Initializing NcwmManager");
     _stdscr = initscr();
@@ -33,6 +35,12 @@ void NcwmManager::init()
     printw("Hello World !!!");
 	refresh();
 	getch();
+}
+
+void NcwmManager::add_frame(std::shared_ptr<Frame> frame)
+{
+    frame->set_notify(std::bind(&NcwmManager::redraw, this));
+    _frames.push_back(frame);
 }
 
 Rect NcwmManager::get_size()
@@ -72,34 +80,53 @@ void NcwmManager::info()
     getch();
 }
 
+void NcwmManager::redraw()
+{
+    /* Draw all frames */
+    for (auto &frame : _frames)
+        frame->draw_win();
+}
+
 bool NcwmManager::run()
 {
     if (_frames.empty())
         return false;
 
-    int current = 0;
+    int current = -1;
     bool execute = false;
 
-    while((_ch = getch()) != 'q')
+    attron(COLOR_PAIR(2));
+    printw("Press Q to exit\n");
+    refresh();
+    attroff(COLOR_PAIR(2));
+
+    redraw();
+
+    while(_end_execution == false)
     {
-        switch(_ch)
-        {
-            case 'n':
-                current += 1;
-                break;
-            case 'p':
-                current -= 1;
-                break;
-            case 'e':
-                execute = true;
-        }
+        current += 1;
+        current = current % _frames.size();
         if (current < 0)
             current = 0;
         if (current >= _frames.size())
             current = _frames.size() - 1;
-        if (execute)
-            _frames.at(current).run();
-        execute = false;
+
+        std::stringstream msg;
+        msg << "Running frame: " << current;
+        mvaddstr(0, 0, msg.str().c_str());
+
+        _frames.at(current)->run();
+        _ch = getch();
+        switch(_ch)
+        {
+            case 'q':
+                _end_execution = true;
+                mvaddstr(0, 0, "User end execution. Push any button...");
+                getch();
+                break;
+            default:
+                break;
+        }
     }
 
     return true;
@@ -107,20 +134,5 @@ bool NcwmManager::run()
 
 void NcwmManager::test()
 {
-    Rect rect;
-    rect.x = 5;
-    rect.y = 5;
-    rect.width = 5;
-    rect.height = 5;
-    Frame frame(rect, get_size());
-    _frames.push_back(frame);
-/*
-    Rect rect2;
-    rect.x = 15;
-    rect.y = 15;
-    rect.width = 15;
-    rect.height = 15;
-    Frame frame2(rect2, get_size());
-    _frames.push_back(frame);*/
-    run();
+
 }
