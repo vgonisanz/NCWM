@@ -7,6 +7,9 @@
 
 #include "ncwm_types.h"
 
+#include <sstream>
+#include <iomanip>
+
 class Frame
 {
 private:
@@ -22,14 +25,18 @@ private:
     std::function<void()> _notify;  /* Callback to notify important changes */
     std::map<std::string, std::function<void()> > _mode_callbacks;
 
+    bool _destroyable;
+
 public:
+    Frame(WINDOW *win, Rect constraint, bool movable = false, bool resizable = false);
     Frame(Rect rect, Rect constraint, bool movable = false, bool resizable = false);
     ~Frame();
 
     void run();
     void draw_win();
-    void refresh_win();
+    void refresh_all();
     void set_notify(std::function<void()> notify);  /* Callback to notify a interface change */
+    void print_coords();
 
 private:
     void create_win();          /* Create win using _rect data */

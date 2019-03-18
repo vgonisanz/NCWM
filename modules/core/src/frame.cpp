@@ -5,18 +5,36 @@ _notify(nullptr),
 _rect(rect),
 _constraint(constraint),
 _movable(movable),
-_resizable(resizable)
+_resizable(resizable),
+_destroyable(true)
 {
     create_win();
 
     _mode_callbacks[std::string("normal")] = std::bind(&Frame::mode_normal, this);
-    _mode_callbacks[std::string("movement")] = std::bind(&Frame::mode_movement, this);
-    _mode_callbacks[std::string("resize")] = std::bind(&Frame::mode_resize, this);
+    if (_movable)
+        _mode_callbacks[std::string("movement")] = std::bind(&Frame::mode_movement, this);
+    if (_resizable)
+        _mode_callbacks[std::string("resize")] = std::bind(&Frame::mode_resize, this);
+}
+
+Frame::Frame(WINDOW *win, Rect constraint, bool movable, bool resizable):
+_notify(nullptr),
+_win(win),
+_constraint(constraint),
+_movable(movable),
+_resizable(resizable),
+_destroyable(false)
+{
+    // **TODO** Thinks about this.
+    //update_win();
+    //draw_win();
+    //refresh_all();
 }
 
 Frame::~Frame()
 {
-    destroy_win();
+    if (_destroyable)
+        destroy_win();
 }
 
 void Frame::set_notify(std::function<void()> notify)
@@ -28,14 +46,14 @@ void Frame::create_win()
 {
     _win = newwin(_rect.height, _rect.width, _rect.y, _rect.x);
     draw_win();
-    refresh_win();
+    refresh_all();
 }
 
 void Frame::move_win()
 {
     mvwin(_win, _rect.y, _rect.x);
     draw_win();
-    refresh_win();
+    refresh_all();
 }
 
 void Frame::destroy_win()
@@ -46,6 +64,9 @@ void Frame::destroy_win()
 void Frame::draw_win()
 {
     box(_win, 0, 0);    /*debug purpose */
+    //wborder(_win, '|', '|', '-', '-', '+', '+', '+', '+');
+    //refresh();
+    print_coords();
     wrefresh(_win);     /* Force refresh after draw */
 }
 
@@ -56,11 +77,10 @@ void Frame::update_win()
     getmaxyx(_win, _rect.height, _rect.width);
 }
 
-void Frame::refresh_win()
+void Frame::refresh_all()
 {
     if(_notify != nullptr)
         _notify();
-    wrefresh(_win);
 }
 
 void Frame::run()
@@ -78,10 +98,22 @@ bool Frame::set_mode(std::string mode)
     return true;
 }
 
+void Frame::print_coords()
+{
+    std::stringstream data;
+
+    data << std::setfill('0') << std::setw(3);
+    data << _rect.x;
+    data << ",";
+    data << std::setfill('0') << std::setw(3);
+    data << _rect.y;
+    mvwaddstr(_win, _rect.height - 1, 1, data.str().c_str());
+}
+
 void Frame::mode_normal()
 {
-    draw_win();
-    refresh_win();
+    //draw_win();
+    //refresh_all();
     while((_ch = getch()) != 'q')
     {
         switch(_ch)
@@ -121,11 +153,8 @@ void Frame::mode_resize()
                     _rect.height += 1;
                 break;
         }
-        //clear();
-        //refresh();
         destroy_win();
         create_win();
-        refresh_win();
     }
 }
 
@@ -154,10 +183,6 @@ void Frame::mode_movement()
             default:
                 break;
         }
-        //clear();
-        //refresh();
-        refresh();
         move_win();
-        refresh_win();
     }
 }

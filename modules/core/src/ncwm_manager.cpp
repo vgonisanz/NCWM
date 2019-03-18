@@ -9,6 +9,7 @@ _end_execution(false),
 _ch('a')
 {
     printf("Initializing NcwmManager");
+
     _stdscr = initscr();
     raw();				            /* Line buffering disabled */
 	keypad(stdscr, TRUE);	        /* We get F1, F2... */
@@ -82,6 +83,9 @@ void NcwmManager::info()
 
 void NcwmManager::redraw()
 {
+    clear();
+    refresh();
+
     /* Draw all frames */
     for (auto &frame : _frames)
         frame->draw_win();
